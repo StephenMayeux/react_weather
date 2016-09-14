@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { fetchWeather } from '../actions/index';
 
-export default class SearchBar extends Component {
+class SearchBar extends Component {
   constructor(props) {
     super(props);
 
@@ -13,11 +16,14 @@ export default class SearchBar extends Component {
 
   onFormSubmit(event) {
     event.preventDefault();
+
+    this.props.fetchWeather(this.state.term);
+    this.setState({ term: '' });
   }
 
   render() {
     return (
-      <form onSubmit={this.onFormSubmit} className="input-group">
+      <form onSubmit={this.onFormSubmit.bind(this)} className="input-group">
         <input
           placeholder="Get a 5-day forecast in your favorite cities"
           className="form-control"
@@ -31,3 +37,11 @@ export default class SearchBar extends Component {
     );
   }
 }
+
+// key gets passed to component as props
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ fetchWeather: fetchWeather }, dispatch);
+}
+
+// This container doesn't care about global state, so we pass null as 1st argument
+export default connect(null, mapDispatchToProps)(SearchBar);
